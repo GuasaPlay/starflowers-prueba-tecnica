@@ -1,0 +1,31 @@
+datasource db {
+    provider = "sqlite"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Range {
+    id             String          @id @default(cuid())
+    maximum        Int
+    minimum        Int
+    status         Boolean
+    samplingRanges SamplingRange[]
+}
+
+model SamplingRange {
+    id            String   @id @default(cuid())
+    numberSamples Int
+    range         Range    @relation(fields: [rangeId], references: [id])
+    rangeId       String
+    sampling      Sampling @relation(fields: [samplingId], references: [id])
+    samplingId    String
+}
+
+model Sampling {
+    id             String          @id @default(cuid())
+    name           String
+    samplingRanges SamplingRange[]
+}
