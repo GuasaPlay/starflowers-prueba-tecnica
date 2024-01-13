@@ -1,13 +1,23 @@
-import { Box, Container } from '@mui/material';
+import { getRanges } from '@/actions/range.actions';
+import { Container } from '@mui/material';
+import { RangesClient } from './components/client';
 
-export default function Home() {
+const RangesPage = async () => {
+	const ranges = await getRanges();
+
 	return (
 		<Container maxWidth="md">
-			<Box>
-				Lorem ipsum dolor, sit amet consectetur adipisicing elit. Laborum vitae temporibus, voluptatibus iure
-				tenetur rem unde quo itaque, omnis earum molestiae veniam recusandae exercitationem assumenda, numquam velit
-				officia est. Nesciunt?
-			</Box>
+			{/* <Box>
+				{ranges?.map((range) => (
+					<div key={range.id}>
+						{range.maximum} - {range.minimum}
+					</div>
+				))}
+			</Box> */}
+
+			<RangesClient />
 		</Container>
 	);
-}
+};
+
+export default RangesPage;
