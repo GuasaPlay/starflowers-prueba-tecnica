@@ -25,6 +25,7 @@ export const RangeForm = ({ open, setOpen }: RangeFormProps) => {
 		samplesTypes: [{ name: '', id: createId() }],
 	};
 
+	// eslint-disable-next-line react-hooks/exhaustive-deps
 	const formValues = useMemo<RangeFormType>(() => (isSuccess ? defaultValues : defaultValues), []);
 
 	const form = useForm<RangeFormType>({
