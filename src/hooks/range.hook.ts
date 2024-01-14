@@ -1,4 +1,4 @@
-import { getRanges, updateRangeStatus } from '@/actions/range.actions';
+import { createSamplingRange, getRanges, updateRangeStatus } from '@/actions/range.actions';
 import { RANGES_KEY } from '@/utils/query-keys';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -15,6 +15,18 @@ export const useUpdateStatus = () => {
 
 	return useMutation({
 		mutationFn: updateRangeStatus,
+
+		onSettled: async () => {
+			return await queryClient.invalidateQueries({ queryKey: [RANGES_KEY] });
+		},
+	});
+};
+
+export const useCreateSamplingRange = () => {
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: createSamplingRange,
 
 		onSettled: async () => {
 			return await queryClient.invalidateQueries({ queryKey: [RANGES_KEY] });

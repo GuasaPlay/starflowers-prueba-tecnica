@@ -1,6 +1,7 @@
 datasource db {
-    provider = "sqlite"
-    url      = env("DATABASE_URL")
+    provider     = "mysql"
+    url          = env("DATABASE_URL")
+    relationMode = "prisma"
 }
 
 generator client {
@@ -18,10 +19,13 @@ model Range {
 model SamplingRange {
     id            String   @id @default(cuid())
     numberSamples Int
-    range         Range    @relation(fields: [rangeId], references: [id])
+    range         Range    @relation(fields: [rangeId], references: [id], onDelete: Cascade)
     rangeId       String
-    sampling      Sampling @relation(fields: [samplingId], references: [id])
+    sampling      Sampling @relation(fields: [samplingId], references: [id], onDelete: Cascade)
     samplingId    String
+
+    @@index([rangeId])
+    @@index([samplingId])
 }
 
 model Sampling {
