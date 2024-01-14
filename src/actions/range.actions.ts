@@ -3,21 +3,11 @@
 import { db } from '@/lib/db';
 import { type Prisma } from '@prisma/client';
 export const getRanges = async () => {
-	try {
-		const ranges = await db.range.findMany({
-			// include: {
-			// 	samplingRanges: {
-			// 		include: {
-			// 			sampling: {},
-			// 		},
-			// 	},
-			// },
-		});
+	const ranges = await db.range.findMany({
+		orderBy: { maximum: 'desc' },
+	});
 
-		return ranges;
-	} catch (error) {
-		throw new Error('Ocurrió un error al obtener los rangos');
-	}
+	return ranges;
 };
 
 export const updateRangeStatus = async ({ id, status }: { id: string; status: boolean }) => {
@@ -44,17 +34,8 @@ export const createSamplingRange = async ({ range, sampling, samplingRange }: Cr
 	return transaction;
 };
 
-export const createSampling = async (data: Prisma.SamplingCreateInput) => {
-	const sampling = await db.sampling.createMany({
-		data: [data],
-	});
+export const deleteSamplingRange = async ({ id }: { id: string }) => {
+	const result = await db.range.delete({ where: { id } });
 
-	return sampling;
-};
-
-export const createRange = async (data: Prisma.RangeCreateInput) => {
-	const range = await db.range.create({
-		data,
-	});
-	return range;
+	return result;
 };

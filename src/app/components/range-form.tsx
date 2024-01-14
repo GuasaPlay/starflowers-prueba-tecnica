@@ -77,12 +77,7 @@ export const RangeForm = ({ open, setOpen }: RangeFormProps) => {
 	};
 
 	return (
-		<Modal
-			open={open}
-			onClose={handleClose}
-			aria-labelledby="modal-modal-title"
-			aria-describedby="modal-modal-description"
-		>
+		<Modal open={open} onClose={handleClose}>
 			<Fade in={open}>
 				<div className="min-w-[80%] max-w-2xl absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2  bg-white rounded-lg shadow-lg p-4">
 					<Box sx={{ width: '100%' }}>
