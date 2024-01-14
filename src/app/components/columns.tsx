@@ -52,7 +52,7 @@ export const columns: GridColDef[] = [
 				>
 					<EditIcon fontSize="small" />
 				</Button>,
-				<DeleteWrapper row={row} />,
+				<DeleteWrapper row={row} key="delete" />,
 				<Button
 					sx={{ paddingX: '4px', minWidth: '0px' }}
 					size="small"
