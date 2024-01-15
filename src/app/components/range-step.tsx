@@ -7,16 +7,20 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
 interface RangeStepProps {
 	setActiveStep: (step: any) => void;
+	option: 'create' | 'edit' | 'view';
 }
-export const RangeStep = ({ setActiveStep }: RangeStepProps) => {
-	const { control, formState, trigger } = useFormContext<RangeFormType>();
+export const RangeStep = ({ setActiveStep, option }: RangeStepProps) => {
+	const { control, trigger, getFieldState } = useFormContext<RangeFormType>();
 
 	const { fields, append, remove } = useFieldArray({ control, name: 'ranges' });
 
 	const handleNextStep = () => {
 		trigger('ranges');
+
 		setTimeout(() => {
-			if (formState.isDirty && !formState.errors.ranges) {
+			const fieldState = getFieldState('ranges');
+
+			if (!fieldState.invalid) {
 				setActiveStep((prevActiveStep: any) => prevActiveStep + 1);
 			}
 		}, 100);
@@ -33,6 +37,7 @@ export const RangeStep = ({ setActiveStep }: RangeStepProps) => {
 							render={({ field, fieldState }) => (
 								<TextField
 									{...field}
+									disabled={option === 'view'}
 									type="number"
 									label="Valor mínimo"
 									variant="standard"
@@ -48,6 +53,7 @@ export const RangeStep = ({ setActiveStep }: RangeStepProps) => {
 							render={({ field, fieldState }) => (
 								<TextField
 									{...field}
+									disabled={option === 'view'}
 									type="number"
 									label="Valor máximo"
 									variant="standard"
@@ -87,20 +93,22 @@ export const RangeStep = ({ setActiveStep }: RangeStepProps) => {
 				}}
 			>
 				<Stack direction="row" spacing={2}>
-					<Button
-						variant="contained"
-						color="primary"
-						startIcon={<AddIcon />}
-						onClick={() =>
-							append({
-								minimum: undefined as any,
-								maximum: undefined as any,
-								id: createId(),
-							})
-						}
-					>
-						Agregar
-					</Button>
+					{option === 'create' && (
+						<Button
+							variant="contained"
+							color="primary"
+							startIcon={<AddIcon />}
+							onClick={() =>
+								append({
+									minimum: undefined as any,
+									maximum: undefined as any,
+									id: createId(),
+								})
+							}
+						>
+							Agregar
+						</Button>
+					)}
 				</Stack>
 				<Stack direction="row" spacing={2}>
 					<Button variant="contained" color="primary" onClick={handleNextStep}>

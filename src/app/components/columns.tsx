@@ -1,5 +1,7 @@
 import { useDeleteSamplingRange, useUpdateStatus } from '@/hooks/range.hook';
+import { useSetting } from '@/hooks/setting.hook';
 import CloseIcon from '@mui/icons-material/Close';
+import CommentIcon from '@mui/icons-material/Comment';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -17,7 +19,7 @@ import {
 } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
-import { RangeEditForm } from './range-edit-form';
+import { RangeForm } from './range-form';
 
 export const columns: GridColDef[] = [
 	{
@@ -40,10 +42,8 @@ export const columns: GridColDef[] = [
 		field: 'actions',
 		headerName: 'Acciones',
 		minWidth: 150,
-		type: 'actions',
-		getActions: ({ row }) => {
-			return ButtonsActions({ row });
-		},
+
+		renderCell: ({ row }) => <ButtonsActions row={row} />,
 	},
 ];
 
@@ -63,37 +63,89 @@ const SwitchStatus = ({ value, row }: any) => {
 };
 
 const ButtonsActions = ({ row }: any) => {
-	return [...UpdateWrapper({ row }), <DeleteWrapper row={row} key="delete" />];
+	const [open, setOpen] = useState(false);
+	const [option, setOption] = useState<'edit' | 'view'>('edit');
+
+	const { data } = useSetting();
+
+	return (
+		<Box>
+			<Stack direction="row" spacing={1}>
+				{data?.isEdit && (
+					<Button
+						sx={{ paddingX: '4px', minWidth: '0px' }}
+						size="small"
+						variant="contained"
+						aria-label="delete"
+						key="edit"
+						color="primary"
+						onClick={() => {
+							setOpen(true);
+							setOption('edit');
+						}}
+					>
+						<EditIcon fontSize="small" />
+					</Button>
+				)}
+				<RangeForm open={open} setOpen={setOpen} key="edit-form" option={option} range={row} />
+				{data?.isView && (
+					<Button
+						sx={{ paddingX: '4px', minWidth: '0px' }}
+						size="small"
+						variant="contained"
+						aria-label="delete"
+						key="view"
+						color="info"
+						onClick={() => {
+							setOpen(true);
+							setOption('view');
+						}}
+					>
+						<VisibilityIcon fontSize="small" />
+					</Button>
+				)}
+				{data?.isComment && (
+					<Button
+						sx={{ paddingX: '4px', minWidth: '0px' }}
+						size="small"
+						variant="contained"
+						aria-label="comment"
+						key="comment"
+						color="warning"
+						onClick={() => {
+							alert('Comentarios');
+						}}
+					>
+						<CommentIcon fontSize="small" />
+					</Button>
+				)}
+				{data?.isDelete && <DeleteWrapper row={row} />}
+			</Stack>
+		</Box>
+	);
+
+	// return [
+	// 	...UpdateWrapper({ row }),
+	// 	<Button
+	// 		sx={{ paddingX: '4px', minWidth: '0px' }}
+	// 		size="small"
+	// 		variant="contained"
+	// 		aria-label="comment"
+	// 		key="comment"
+	// 		color="warning"
+	// 		onClick={() => {
+	// 			alert('Comentarios');
+	// 		}}
+	// 	>
+	// 		<CommentIcon fontSize="small" />
+	// 	</Button>,
+
+	// 	<DeleteWrapper row={row} key="delete" />,
+	// ];
 };
 
 const UpdateWrapper = ({ row }: any) => {
-	const [open, setOpen] = useState(false);
-
-	return [
-		<Button
-			sx={{ paddingX: '4px', minWidth: '0px' }}
-			size="small"
-			variant="contained"
-			aria-label="delete"
-			key="edit"
-			color="primary"
-			onClick={() => setOpen(true)}
-		>
-			<EditIcon fontSize="small" />
-		</Button>,
-		<RangeEditForm open={open} setOpen={setOpen} key="edit-form" />,
-		<Button
-			sx={{ paddingX: '4px', minWidth: '0px' }}
-			size="small"
-			variant="contained"
-			aria-label="delete"
-			key="view"
-			color="info"
-			onClick={() => setOpen(true)}
-		>
-			<VisibilityIcon fontSize="small" />
-		</Button>,
-	];
+	return [];
 };
 
 const DeleteWrapper = ({ row }: any) => {

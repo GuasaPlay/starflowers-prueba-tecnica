@@ -5,9 +5,10 @@ import { Control, Controller, useFieldArray, useFormContext } from 'react-hook-f
 interface SamplingRangeStepProps {
 	setActiveStep: (step: any) => void;
 	isPending?: boolean;
+	option: 'create' | 'edit' | 'view';
 }
 
-export const SamplingRangeStep = ({ setActiveStep, isPending }: SamplingRangeStepProps) => {
+export const SamplingRangeStep = ({ setActiveStep, isPending, option }: SamplingRangeStepProps) => {
 	const { control, formState, trigger } = useFormContext<RangeFormType>();
 
 	const { fields, append, remove } = useFieldArray({ control, name: 'ranges' });
@@ -18,13 +19,14 @@ export const SamplingRangeStep = ({ setActiveStep, isPending }: SamplingRangeSte
 				{fields.map((item, index) => (
 					<Stack key={item.id} spacing={3} direction="row" display="flex" flexWrap="wrap">
 						<TextField
+							disabled
 							label="Rango"
 							variant="standard"
 							value={`${item.minimum}-${item.maximum}`}
 							sx={{ flex: 1 }}
 						/>
 
-						<Sampling control={control} nestIndex={index} />
+						<Sampling control={control} nestIndex={index} option={option} />
 					</Stack>
 				))}
 			</Stack>
@@ -46,9 +48,12 @@ export const SamplingRangeStep = ({ setActiveStep, isPending }: SamplingRangeSte
 						Volver
 					</Button>
 					<Box sx={{ m: 1, position: 'relative' }}>
+						{option !== 'view' && (
 						<Button type="submit" variant="contained" color="primary" disabled={isPending}>
-							Guardar
+							{option === 'create' && 'Crear'}
+							{option === 'edit' && 'Actualizar'}
 						</Button>
+						)}
 						{isPending && (
 							<CircularProgress
 								size={24}
@@ -71,9 +76,10 @@ export const SamplingRangeStep = ({ setActiveStep, isPending }: SamplingRangeSte
 interface RangeStepProps {
 	control: Control<RangeFormType>;
 	nestIndex: number;
+	option: 'create' | 'edit' | 'view';
 }
 
-const Sampling = ({ control, nestIndex }: RangeStepProps) => {
+const Sampling = ({ control, nestIndex, option }: RangeStepProps) => {
 	const { fields } = useFieldArray({ control, name: `ranges.${nestIndex}.samplingRange` });
 
 	return (
@@ -86,6 +92,7 @@ const Sampling = ({ control, nestIndex }: RangeStepProps) => {
 					render={({ field, fieldState }) => (
 						<TextField
 							{...field}
+							disabled={option === 'view'}
 							type="number"
 							label={sample.samplingLabel}
 							variant="standard"

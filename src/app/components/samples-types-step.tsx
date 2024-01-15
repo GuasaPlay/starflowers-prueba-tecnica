@@ -1,3 +1,4 @@
+import { RangePayload } from '@/actions/range.actions';
 import { RangeFormType } from '@/schemas/range.schema';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -7,30 +8,36 @@ import { Controller, useFieldArray, useFormContext } from 'react-hook-form';
 
 interface RangeStepProps {
 	setActiveStep: (step: any) => void;
+	option: 'create' | 'edit' | 'view';
+	range?: RangePayload;
 }
-export const SamplesTypesStep = ({ setActiveStep }: RangeStepProps) => {
-	const { control, formState, trigger, getValues, setValue } = useFormContext<RangeFormType>();
+export const SamplesTypesStep = ({ setActiveStep, option, range }: RangeStepProps) => {
+	const { control, trigger, getValues, setValue, getFieldState } = useFormContext<RangeFormType>();
 
 	const { fields, append, remove } = useFieldArray({ control, name: 'samplesTypes' });
 
 	const handleNextStep = () => {
 		trigger('samplesTypes');
 		setTimeout(() => {
-			if (formState.isDirty && !formState.errors.samplesTypes) {
+			const fieldState = getFieldState('samplesTypes');
+
+			if (!fieldState.invalid) {
 				const ranges = getValues('ranges');
 
 				const samplesTypes = getValues('samplesTypes');
 
-				// Add samplesTypes to samplingRange in ranges
 				const newRanges: any = ranges!.map(({ id, maximum, minimum, samplingRange }) => {
 					return {
 						id,
 						maximum,
 						minimum,
 						samplingRange: samplesTypes!.map((sample) => ({
+							id: createId(),
 							rangeLabel: `${minimum}-${maximum}`,
 							rangeId: id,
-							numberSamples: undefined,
+							numberSamples:
+								range?.samplingRanges.find((sampling) => sampling.sampling.id === sample.id)?.numberSamples ||
+								undefined,
 							samplingId: sample.id,
 							samplingLabel: sample.name,
 						})),
@@ -55,6 +62,7 @@ export const SamplesTypesStep = ({ setActiveStep }: RangeStepProps) => {
 							render={({ field, fieldState }) => (
 								<TextField
 									{...field}
+									disabled={option === 'view'}
 									label="Nombre"
 									variant="standard"
 									error={fieldState.invalid}
@@ -69,7 +77,7 @@ export const SamplesTypesStep = ({ setActiveStep }: RangeStepProps) => {
 								alignSelf: 'center',
 							}}
 						>
-							{fields.length > 1 && (
+							{fields.length > 1 && option !== 'view' && (
 								<Button
 									sx={{ paddingX: '6px', minWidth: '0px' }}
 									variant="contained"
@@ -94,19 +102,21 @@ export const SamplesTypesStep = ({ setActiveStep }: RangeStepProps) => {
 				}}
 			>
 				<Stack direction="row" spacing={2}>
-					<Button
-						variant="contained"
-						color="primary"
-						startIcon={<AddIcon />}
-						onClick={() =>
-							append({
-								id: createId(),
-								name: '',
-							})
-						}
-					>
-						Agregar
-					</Button>
+					{option !== 'view' && (
+						<Button
+							variant="contained"
+							color="primary"
+							startIcon={<AddIcon />}
+							onClick={() =>
+								append({
+									id: createId(),
+									name: '',
+								})
+							}
+						>
+							Agregar
+						</Button>
+					)}
 				</Stack>
 				<Stack direction="row" spacing={2}>
 					<Button

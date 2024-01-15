@@ -33,3 +33,13 @@ model Sampling {
     name           String
     samplingRanges SamplingRange[]
 }
+
+model Setting {
+    id        String  @id @default(cuid())
+    name      String
+    isCreate  Boolean
+    isEdit    Boolean
+    isView    Boolean
+    isDelete  Boolean
+    isComment Boolean
+}

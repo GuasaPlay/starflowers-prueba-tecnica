@@ -7,14 +7,6 @@ const RangesPage = async () => {
 
 	return (
 		<Container maxWidth="md">
-			{/* <Box>
-				{ranges?.map((range) => (
-					<div key={range.id}>
-						{range.maximum} - {range.minimum}
-					</div>
-				))}
-			</Box> */}
-
 			<RangesClient />
 		</Container>
 	);
