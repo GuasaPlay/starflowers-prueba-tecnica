@@ -17,6 +17,7 @@ import {
 } from '@mui/material';
 import { GridColDef } from '@mui/x-data-grid';
 import { useState } from 'react';
+import { RangeEditForm } from './range-edit-form';
 
 export const columns: GridColDef[] = [
 	{
@@ -41,29 +42,7 @@ export const columns: GridColDef[] = [
 		minWidth: 150,
 		type: 'actions',
 		getActions: ({ row }) => {
-			return [
-				<Button
-					sx={{ paddingX: '4px', minWidth: '0px' }}
-					size="small"
-					variant="contained"
-					aria-label="delete"
-					key="edit"
-					color="primary"
-				>
-					<EditIcon fontSize="small" />
-				</Button>,
-				<DeleteWrapper row={row} key="delete" />,
-				<Button
-					sx={{ paddingX: '4px', minWidth: '0px' }}
-					size="small"
-					variant="contained"
-					aria-label="delete"
-					key="view"
-					color="info"
-				>
-					<VisibilityIcon fontSize="small" />
-				</Button>,
-			];
+			return ButtonsActions({ row });
 		},
 	},
 ];
@@ -81,6 +60,40 @@ const SwitchStatus = ({ value, row }: any) => {
 			}}
 		/>
 	);
+};
+
+const ButtonsActions = ({ row }: any) => {
+	return [...UpdateWrapper({ row }), <DeleteWrapper row={row} key="delete" />];
+};
+
+const UpdateWrapper = ({ row }: any) => {
+	const [open, setOpen] = useState(false);
+
+	return [
+		<Button
+			sx={{ paddingX: '4px', minWidth: '0px' }}
+			size="small"
+			variant="contained"
+			aria-label="delete"
+			key="edit"
+			color="primary"
+			onClick={() => setOpen(true)}
+		>
+			<EditIcon fontSize="small" />
+		</Button>,
+		<RangeEditForm open={open} setOpen={setOpen} key="edit-form" />,
+		<Button
+			sx={{ paddingX: '4px', minWidth: '0px' }}
+			size="small"
+			variant="contained"
+			aria-label="delete"
+			key="view"
+			color="info"
+			onClick={() => setOpen(true)}
+		>
+			<VisibilityIcon fontSize="small" />
+		</Button>,
+	];
 };
 
 const DeleteWrapper = ({ row }: any) => {
